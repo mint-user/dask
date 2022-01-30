@@ -17,6 +17,6 @@ class TestUserCreation:
     def test_create_user(self, API_URL, delete_user_by_email):
         email = "qwe@qwe"
         delete_user_by_email(email)
-        resp = requests.post(API_URL, {"email": email, "password": "pqwe123QWDsdf"})
+        resp = requests.post(API_URL+"/api/v1/accounts", json={"email": email, "password": "pqwe123QWDsdf"})
         print(resp.text)
         assert resp.status_code == 201
