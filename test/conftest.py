@@ -7,17 +7,25 @@ from app import db
 def API_URL():
     return "http://localhost:8080"
 
+def get_user_ny_email(email):
+    return User.query.filter(User.email == email).first()
 
 @pytest.fixture(scope="function")
 def delete_user_by_email():
     def _method(email):
-        user = User.query.filter(User.email == email).first()
+        user = get_user_ny_email(email)
         print('*****************/////////////////')
         print(user)
-        if not user is None:
+        if user is not None:
             db.session.delete(user)
             db.session.commit()
-            # user.delete()
-            # return str(user)
+
+    return _method
+
+
+@pytest.fixture(scope="function")
+def user_exists_by_email():
+    def _method(email):
+        return get_user_ny_email(email)
 
     return _method

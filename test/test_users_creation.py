@@ -1,9 +1,4 @@
 import requests
-import string
-
-
-# def delete_user_by_email(email):
-#     pass
 
 
 class TestUserCreation:
@@ -14,9 +9,12 @@ class TestUserCreation:
         print(resp.text)
         assert resp.status_code == 200
 
-    def test_create_user(self, API_URL, delete_user_by_email):
+    def test_create_user(self, API_URL, delete_user_by_email, user_exists_by_email):
         email = "qwe@qwe"
         delete_user_by_email(email)
         resp = requests.post(API_URL+"/api/v1/accounts", json={"email": email, "password": "pqwe123QWDsdf"})
         print(resp.text)
         assert resp.status_code == 201
+        user = user_exists_by_email(email)
+        assert user is not None
+        assert user.email == email
