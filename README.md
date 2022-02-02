@@ -41,8 +41,8 @@
 }
 ```
 **PATCH** - update account
-Only with token
-At least one of fields "email" or "password" needed, or both
+* Only with token
+* At least one of fields "email" or "password" needed, or both
 ```json
 {
   "user_id": 1,
@@ -54,7 +54,7 @@ At least one of fields "email" or "password" needed, or both
 
 | action                                                            | code | expected                                                                                                                                                                             |
 |-------------------------------------------------------------------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| different valid email,<br/>different valid password               | 200  | OK. __User has been updated __                                                                                                                                                        |
+| different valid email,<br/>different valid password               | 200  | OK. __User has been updated__                                                                                                                                                        |
 | valid email,<br/>valid password,<br/> user with this email exists | 202  | Email is already used                                                                                                                                                                |
 | email & password are not valid                                    | 409  | Email should contain "@" <br/> Password is too short<br/>Password is too long<br/>Password should contain uppercase, lowercase letters and numbers<br/>__User has not been created__ |
 | no email or password fields                                       | 409  | Request should contain "email" and "password" fields<br/>__User has not been created__                                                                                               |
