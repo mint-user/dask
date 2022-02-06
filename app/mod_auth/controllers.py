@@ -22,11 +22,11 @@ def update_user():
     print(request.data)
 
 
-@app.route('/api/v1/accounts/login', methods=['POST'])
+@app.route('/api/v1/accounts/session', methods=['POST'])
 def login():
     print(request.data)
     # check request structure
-    if 'email' not in request.json or 'password' not in request.json:
+    if 'email' not in request.json.keys() or 'password' not in request.json.keys():
         return {"error": "Bad request"}, 400
 
     # email exists
