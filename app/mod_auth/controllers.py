@@ -1,3 +1,4 @@
+import re
 import secrets
 
 from app import app, db
@@ -21,7 +22,7 @@ def update_user():
     print(request.data)
 
 
-@app.route('/api/v1/login', methods=['POST'])
+@app.route('/api/v1/accounts/login', methods=['POST'])
 def login():
     print(request.data)
     # check request structure
@@ -54,7 +55,6 @@ def login():
     return {"token": token, "token_expires": token_expires.strftime('%Y-%m-%d %H:%M:%S')}, 201
 
 
-
 @app.route('/api/v1/accounts', methods=['POST'])
 def create_user():
     """
@@ -62,17 +62,38 @@ def create_user():
     """
     print("POST REQUEST=====================")
     print(request.data)
+    # check fields
+    print(request.json)
+    print(request.json.keys())
     if not ("email" in request.json.keys() and "password" in request.json.keys()):
-        return {"error": "Request should contain 'email' and 'password' fields"}, 409
-    else:
-        email = request.json['email']
-        user = User.query.filter(User.email == email).first()
-        print(user)
-        if user is not None:
-            return {"error": "Email is already used"}, 202
-        else:
-            pass_hash = bcrypt.generate_password_hash(request.json['password'])
-            user = User(email=email, password=pass_hash)
-            db.session.add(user)
-            db.session.commit()
-            return str(request.data), 201
+        return {"error": "Request should contain 'email' and 'password' fields"}, 400
+
+    # check email is correct
+    email = request.json['email']
+    if "@" not in email:
+        return {"error": "Email should contain '@'"}, 400
+
+    # check password
+    password = request.json['password']
+    if 20 <= len(password) or len(password) <= 8:
+        return {"error": "Password should contain 8..20 characters"}, 400
+
+    if re.search("[a-z]", password) is None:
+        return {"error": "Password should contain lowercase letters"}, 400
+
+    if re.search("[A-Z]", password) is None:
+        return {"error": "Password should contain uppercase letters"}, 400
+
+    if re.search("\d", password) is None:
+        return {"error": "Password should contain digits"}, 400
+
+    user = User.query.filter(User.email == email).first()
+    print(user)
+    if user is not None:
+        return {"error": "Email is already used"}, 202
+
+    pass_hash = bcrypt.generate_password_hash(password)
+    user = User(email=email, password=pass_hash)
+    db.session.add(user)
+    db.session.commit()
+    return str(request.data), 201
