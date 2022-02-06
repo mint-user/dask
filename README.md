@@ -30,10 +30,10 @@
 ```
 | action                                                            | code | expected                                                                                                                                                                             |
 |-------------------------------------------------------------------|------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| no email or password fields                                       | 409  | Request should contain "email" and "password" fields<br/>__User has not been created__                                                                                               |
+| email or password are not valid                                   | 409  | Email should contain "@" <br/> Password is too short<br/>Password is too long<br/>Password should contain uppercase, lowercase letters and numbers<br/>__User has not been created__ |
 | valid email,<br/>valid password                                   | 201  | OK. __User has been created__                                                                                                                                                        |
 | valid email,<br/>valid password,<br/> user with this email exists | 202  | Email is already used                                                                                                                                                                |
-| email & password are not valid                                    | 409  | Email should contain "@" <br/> Password is too short<br/>Password is too long<br/>Password should contain uppercase, lowercase letters and numbers<br/>__User has not been created__ |
-| no email or password fields                                       | 409  | Request should contain "email" and "password" fields<br/>__User has not been created__                                                                                               |
 
 ```json
 {
@@ -84,8 +84,6 @@ Setup - exists user qwe@qwe oIwi5jdPJlLGzba?
 
 | method | request                                                         | response                                                                                                         | code | desc                                                                 |
 |--------|-----------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|------|----------------------------------------------------------------------|
-| GET    | {}                                                              | {"error":"Forbidden"}                                                                                            | 403  | Forbidden                                                            |
-| PATCH  | {}                                                              | {"error":"Forbidden"}                                                                                            | 403  | Forbidden                                                            |
 | POST   | {"email": "qwe@qwe",<br/>"password": "oIwi5jdPJlLGzba?"}        | {"user": {"id": 1}, <br/>token": "8dfafac23e0382d29627c856156cac8e",<br/>"token_expires": "2022-02-03 23:20:10"} | 201  | OK. User has been logged in. <br/>token_expires - datetime in future |
 | POST   | {"email": "qwewasd@qwe1111", "password": "1"}                   | {"error":"Wrong email or password"}                                                                              |      | wrong email                                                          |
 | POST   | {"email": "qwe@qwe", "password": "123"}                         | {"error":"Wrong email or password"}                                                                              | 401  | wrong password                                                       |
