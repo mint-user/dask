@@ -22,6 +22,29 @@ def update_user():
     print(request.data)
 
 
+@app.route('/api/v1/accounts/session', methods=['DELETE'])
+def logout():
+    print(request.data)
+    # check request structure
+    if 'user_id' not in request.json.keys() or 'token' not in request.json.keys():
+        return {"error": "Bad request"}, 400
+
+    # check user ID and token
+    user = User.query.filter(User.id == request.json['user_id']).first()
+    if user is None:
+        return {"error": "Wrong user ID or token"}, 404
+
+    if user.token != request.json['token']:
+        return {"error": "Wrong user ID or token"}, 404
+
+    # deleting session
+    user.token = None
+    db.session.add(user)
+    db.session.commit()
+
+    return {}, 200
+
+
 @app.route('/api/v1/accounts/session', methods=['POST'])
 def login():
     print(request.data)
@@ -37,6 +60,7 @@ def login():
 
     # check password
     pass_hash = user.password
+    print("CHECKING PASSWORD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     if not bcrypt.check_password_hash(pass_hash, request.json['password']):
         return {"error": "Wrong email or password"}, 401
 
@@ -52,7 +76,9 @@ def login():
 
     db.session.add(user)
     db.session.commit()
-    return {"token": token, "token_expires": token_expires.strftime('%Y-%m-%d %H:%M:%S')}, 201
+    return {"user": {"id": user.id},
+            "token": token,
+            "token_expires": token_expires.strftime('%Y-%m-%d %H:%M:%S')}, 201
 
 
 @app.route('/api/v1/accounts', methods=['POST'])

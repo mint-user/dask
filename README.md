@@ -60,8 +60,8 @@ Setup - exists user qwe@qwe oIwi5jdPJlLGzba
 | POST   | {"email": "qwe@qwe", "password": "123"}                         | {"error":"Wrong email or password"}                                                                              | 400  | wrong password                                                       |
 | POST   | {}                                                              | {"error":"Bad request"}                                                                                          | 400  | Bad request                                                          |
 | POST   | {"email": "qwe@qwe",<br/>"password": "oIwi5jdPJlLGzba?"}        | {"user": {"id": 1}, <br/>token": "8dfafac23e0382d29627c856156cac8e",<br/>"token_expires": "2022-02-03 23:20:10"} | 201  | OK. User has been logged in. <br/>token_expires - datetime in future |
-| DELETE | {"token": "86cac8e"}                                            | {"error":"Token not found"}                                                                                      | 404  | Wrong token                                                          |
 | DELETE | {}                                                              | {"error":"Bad request"}                                                                                          | 400  | Bad request                                                          |
+| DELETE | {"user_id": 45, "token": "8dfafac23e0e"}                        | {"error":"Wrong user ID or token"}                                                                               | 404  | Wrong token                                                          |
 | DELETE | {"user_id": 1, <br/>token": "8dfafac23e0382d29627c856156cac8e"} |                                                                                                                  | 200  | OK. User has been logged out                                         |
 
 **PATCH** - update account

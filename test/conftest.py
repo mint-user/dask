@@ -6,7 +6,8 @@ from app import db
 def tech_testuser_data():
     return {"email": "qwe@qwe",
             "password": "oIwi5jdPJlLGzba",
-            "pass_hash": "$2b$12$VVaaR32gGCpWeCrFIVYuMuoVs/ypwfXRpZrrvXhJj3TQvDsbuSziy"}
+            "pass_hash": "$2b$12$VVaaR32gGCpWeCrFIVYuMuoVs/ypwfXRpZrrvXhJj3TQvDsbuSziy",
+            "token": "504dc0bf28a30e67a6929126b1e91cc1"}
 
 
 @pytest.fixture(scope="function")
@@ -23,7 +24,7 @@ def tech_get_user_by_email(email):
     return User.query.filter(User.email == email).first()
 
 
-def tech_delete_user_by_email(email):
+def tech_delete_user_by_email(email=tech_testuser_data()['email']):
     user = tech_get_user_by_email(email)
     print('*****************/////////////////')
     print(user)
@@ -32,8 +33,12 @@ def tech_delete_user_by_email(email):
         db.session.commit()
 
 
-def tech_insert_user():
-    user = User(email=tech_testuser_data()['email'], password=tech_testuser_data()['pass_hash'])
+def tech_insert_user(email=tech_testuser_data()['email'],
+                     password=tech_testuser_data()['pass_hash'],
+                     token=tech_testuser_data()['token']):
+    user = User(email=email,
+                password=password,
+                token=token)
     db.session.add(user)
     db.session.commit()
 
@@ -47,9 +52,9 @@ def is_user_logged_in_by_email():
 
 @pytest.fixture(scope="function")
 def sure_user_exists():
-    def _method(email, password):
+    def _method(email, password, token=None):
         tech_delete_user_by_email(email)
-        tech_insert_user()
+        tech_insert_user(email, password, token)
     return _method
 
 
