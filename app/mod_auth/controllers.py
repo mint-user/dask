@@ -1,13 +1,17 @@
 import re
 import secrets
 
+from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
+    get_jwt
+
 from app import app, db
 from app.mod_auth.models import User
-from flask import request
+from flask import request, jsonify
 from flask_bcrypt import Bcrypt
 from datetime import timedelta, datetime
 
 bcrypt = Bcrypt(app)
+jwt = JWTManager(app)
 
 
 @app.route('/')
@@ -17,34 +21,45 @@ def hello():
     # return 'Hello, World!'
 
 
-@app.route('/api/v1/accounts/<int:id>', methods=['PATCH'])
+# update account
+@app.route('/api/v1/accounts', methods=['PATCH'])
+@jwt_required()
 def update_user():
     print(request.data)
+    user_id = get_jwt()["sub"]
+    user = User.query.filter(User.id == user_id).first()
 
+    if request.json is None:
+        return {"msg": "wrong attributes"}, 400
 
-@app.route('/api/v1/accounts/session', methods=['DELETE'])
-def logout():
-    print(request.data)
-    # check request structure
-    if 'user_id' not in request.json.keys() or 'token' not in request.json.keys():
-        return {"error": "Bad request"}, 400
+    if not ("email" in request.json.keys() or "password" in request.json.keys()):
+        return {"msg": "wrong attributes"}, 400
 
-    # check user ID and token
-    user = User.query.filter(User.id == request.json['user_id']).first()
-    if user is None:
-        return {"error": "Wrong user ID or token"}, 404
+    if "email" in request.json.keys():
+        user.email = request.json['email']
 
-    if user.token != request.json['token']:
-        return {"error": "Wrong user ID or token"}, 404
+    if "password" in request.json.keys():
+        pass_hash = bcrypt.generate_password_hash(request.json['password'])
+        user.password = pass_hash
 
-    # deleting session
-    user.token = None
     db.session.add(user)
     db.session.commit()
 
-    return {}, 200
+    resp = jsonify({"msg": "successful update"})
+    return resp
 
 
+# logout
+@app.route('/api/v1/accounts/session', methods=['DELETE'])
+def logout():
+    print(request.data)
+
+    resp = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(resp)
+    return resp
+
+
+# login
 @app.route('/api/v1/accounts/session', methods=['POST'])
 def login():
     print(request.data)
@@ -64,23 +79,13 @@ def login():
     if not bcrypt.check_password_hash(pass_hash, request.json['password']):
         return {"error": "Wrong email or password"}, 401
 
-    # generate token
-    token = secrets.token_hex(16)
-
-    now = datetime.now()
-    delta = timedelta(hours=1)
-    token_expires = (now + delta)
-
-    user.token = token
-    user.token_expires = token_expires
-
-    db.session.add(user)
-    db.session.commit()
-    return {"user": {"id": user.id},
-            "token": token,
-            "token_expires": token_expires.strftime('%Y-%m-%d %H:%M:%S')}, 201
+    response = jsonify({"msg": "login successful"})
+    access_token = create_access_token(identity=user.id)
+    set_access_cookies(response, access_token)
+    return response
 
 
+# register
 @app.route('/api/v1/accounts', methods=['POST'])
 def create_user():
     """
@@ -89,8 +94,6 @@ def create_user():
     print("POST REQUEST=====================")
     print(request.data)
     # check fields
-    print(request.json)
-    print(request.json.keys())
     if not ("email" in request.json.keys() and "password" in request.json.keys()):
         return {"error": "Request should contain 'email' and 'password' fields"}, 400
 
@@ -113,6 +116,7 @@ def create_user():
     if re.search("\d", password) is None:
         return {"error": "Password should contain digits"}, 400
 
+    # check email is not used
     user = User.query.filter(User.email == email).first()
     print(user)
     if user is not None:
@@ -122,4 +126,9 @@ def create_user():
     user = User(email=email, password=pass_hash)
     db.session.add(user)
     db.session.commit()
-    return str(request.data), 201
+    # access_token = create_access_token(identity=user.id)
+    # return {"access_token": access_token}, 201
+    resp = jsonify({"msg": "registration successful"})
+    access_token = create_access_token(identity=user.id)
+    set_access_cookies(resp, access_token)
+    return resp

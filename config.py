@@ -1,6 +1,5 @@
 import os
 
-
 DEBUG = True
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -26,3 +25,6 @@ CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+# JWT
+JWT_SECRET_KEY = "super-secret"
