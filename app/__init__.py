@@ -5,6 +5,6 @@ app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-# db.create_all()
+from .auth import auth
 
-from app.mod_auth import controllers
+app.register_blueprint(auth)

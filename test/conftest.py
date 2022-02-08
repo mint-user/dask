@@ -1,5 +1,5 @@
 import pytest
-from app.mod_auth.models import User
+from app.auth.models import User
 from app import db
 
 

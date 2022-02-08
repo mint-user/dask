@@ -1,20 +1,19 @@
 import re
-import secrets
-
 from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
     get_jwt
 
-from app import app, db
-from app.mod_auth.models import User
-from flask import request, jsonify
+from app import app
+from app.auth.models import User, db
+from flask import request, jsonify, Blueprint
 from flask_bcrypt import Bcrypt
 from datetime import timedelta, datetime
 
+auth = Blueprint("auth", __name__)
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 
-@app.route('/')
+@auth.route('/')
 def hello():
     user = User.query.all()
     return str(user)
@@ -22,7 +21,7 @@ def hello():
 
 
 # update account
-@app.route('/api/v1/accounts', methods=['PATCH'])
+@auth.route('/api/v1/accounts', methods=['PATCH'])
 @jwt_required()
 def update_user():
     print(request.data)
@@ -50,7 +49,7 @@ def update_user():
 
 
 # logout
-@app.route('/api/v1/accounts/session', methods=['DELETE'])
+@auth.route('/api/v1/accounts/session', methods=['DELETE'])
 def logout():
     print(request.data)
 
@@ -60,7 +59,7 @@ def logout():
 
 
 # login
-@app.route('/api/v1/accounts/session', methods=['POST'])
+@auth.route('/api/v1/accounts/session', methods=['POST'])
 def login():
     print(request.data)
     # check request structure
@@ -86,7 +85,7 @@ def login():
 
 
 # register
-@app.route('/api/v1/accounts', methods=['POST'])
+@auth.route('/api/v1/accounts', methods=['POST'])
 def create_user():
     """
     create new user
