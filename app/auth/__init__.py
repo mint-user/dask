@@ -1,6 +1,6 @@
 import re
 from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
-    get_jwt
+    get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity
 
 from app import app
 from app.auth.models import User, db
@@ -13,6 +13,13 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 
+def validate_email(email):
+    if "@" not in email:
+        return False, {"error": "Email should contain '@'"}, 400
+    else:
+        return True, None, None
+
+
 @auth.route('/')
 def hello():
     user = User.query.all()
@@ -22,7 +29,7 @@ def hello():
 
 # update account
 @auth.route('/api/v1/accounts', methods=['PATCH'])
-@jwt_required()
+@jwt_required(locations=['cookies'])
 def update_user():
     print(request.data)
     user_id = get_jwt()["sub"]
@@ -35,7 +42,12 @@ def update_user():
         return {"msg": "wrong attributes"}, 400
 
     if "email" in request.json.keys():
-        user.email = request.json['email']
+        email = request.json['email']
+        stat, answer, code = validate_email(email)
+        if stat is not True:
+            return answer, code
+        else:
+            user.email = email
 
     if "password" in request.json.keys():
         pass_hash = bcrypt.generate_password_hash(request.json['password'])
@@ -48,8 +60,23 @@ def update_user():
     return resp
 
 
+# refresh
+@auth.route('/api/v1/accounts/session/refresh', methods=['PATCH'])
+@jwt_required(refresh=True, locations=['cookies'])
+def refresh():
+    # Create the new access token
+    current_user = get_jwt_identity()
+    access_token = create_access_token(identity=current_user)
+
+    # Set the JWT access cookie in the response
+    resp = jsonify({'refresh': True})
+    set_access_cookies(resp, access_token)
+    return resp, 200
+
+
 # logout
 @auth.route('/api/v1/accounts/session', methods=['DELETE'])
+@jwt_required(locations=['cookies'])
 def logout():
     print(request.data)
 
@@ -78,10 +105,12 @@ def login():
     if not bcrypt.check_password_hash(pass_hash, request.json['password']):
         return {"error": "Wrong email or password"}, 401
 
-    response = jsonify({"msg": "login successful"})
+    resp = jsonify({"msg": "login successful"})
     access_token = create_access_token(identity=user.id)
-    set_access_cookies(response, access_token)
-    return response
+    refresh_token = create_refresh_token(identity=user.id)
+    set_access_cookies(resp, access_token)
+    set_refresh_cookies(resp, refresh_token)
+    return resp
 
 
 # register
@@ -98,8 +127,11 @@ def create_user():
 
     # check email is correct
     email = request.json['email']
-    if "@" not in email:
-        return {"error": "Email should contain '@'"}, 400
+    # if "@" not in email:
+    #     return {"error": "Email should contain '@'"}, 400
+    stat, answer, code = validate_email(email)
+    if stat is not True:
+        return answer, code
 
     # check password
     password = request.json['password']
@@ -129,5 +161,7 @@ def create_user():
     # return {"access_token": access_token}, 201
     resp = jsonify({"msg": "registration successful"})
     access_token = create_access_token(identity=user.id)
+    refresh_token = create_refresh_token(identity=user.id)
     set_access_cookies(resp, access_token)
-    return resp
+    set_refresh_cookies(resp, refresh_token)
+    return resp, 200

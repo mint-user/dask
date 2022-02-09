@@ -33,60 +33,7 @@
 					]
 				}
 			},
-			"response": [
-				{
-					"name": "create_user",
-					"originalRequest": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"email\": \"qwe@qwe\",\n\"password\": \"oIwi5jdPJlLGzba\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:8080/api/v1/accounts",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"api",
-								"v1",
-								"accounts"
-							]
-						}
-					},
-					"status": "CREATED",
-					"code": 201,
-					"_postman_previewlanguage": "json",
-					"header": [
-						{
-							"key": "Content-Type",
-							"value": "application/json"
-						},
-						{
-							"key": "Content-Length",
-							"value": "286"
-						},
-						{
-							"key": "Server",
-							"value": "Werkzeug/2.0.2 Python/3.8.10"
-						},
-						{
-							"key": "Date",
-							"value": "Mon, 07 Feb 2022 19:11:46 GMT"
-						}
-					],
-					"cookie": [],
-					"body": "{\n    \"access_token\": \"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTY0NDI2MTEwNiwianRpIjoiN2FlZmVhYzctZDJjZC00NWZlLTg2YzctNjY0MmYyNmIzYTY0IiwidHlwZSI6ImFjY2VzcyIsInN1YiI6MSwibmJmIjoxNjQ0MjYxMTA2LCJleHAiOjE2NDQyNjIwMDZ9.NLvdG1kkorPO3wY5o6CbBC03-ewgGCGVn0m5nNK6YnM\"\n}"
-				}
-			]
+			"response": []
 		},
 		{
 			"name": "Login",
@@ -154,7 +101,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"email\": \"123\"}",
+					"raw": "{\"email\": \"123@\"}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -172,6 +119,29 @@
 						"api",
 						"v1",
 						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/accounts/session/refresh",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"accounts",
+						"session",
+						"refresh"
 					]
 				}
 			},

@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 DEBUG = True
 
@@ -28,3 +29,5 @@ SECRET_KEY = "secret"
 
 # JWT
 JWT_SECRET_KEY = "super-secret"
+JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=1)
+JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
