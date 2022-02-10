@@ -34,11 +34,9 @@ def tech_delete_user_by_email(email=tech_testuser_data()['email']):
 
 
 def tech_insert_user(email=tech_testuser_data()['email'],
-                     password=tech_testuser_data()['pass_hash'],
-                     token=tech_testuser_data()['token']):
+                     password=tech_testuser_data()['pass_hash']):
     user = User(email=email,
-                password=password,
-                token=token)
+                password=password)
     db.session.add(user)
     db.session.commit()
 
@@ -52,9 +50,9 @@ def is_user_logged_in_by_email():
 
 @pytest.fixture(scope="function")
 def sure_user_exists():
-    def _method(email, password, token=None):
+    def _method(email, password):
         tech_delete_user_by_email(email)
-        tech_insert_user(email, password, token)
+        tech_insert_user(email, password)
     return _method
 
 

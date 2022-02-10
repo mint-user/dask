@@ -4,11 +4,11 @@ from flask_jwt_extended import create_access_token, JWTManager, set_access_cooki
 
 from app import app
 from app.auth.models import User, db
-from flask import request, jsonify, Blueprint
+from flask import request, jsonify, Blueprint, render_template
 from flask_bcrypt import Bcrypt
 from datetime import timedelta, datetime
 
-auth = Blueprint("auth", __name__)
+auth = Blueprint("auth", __name__, template_folder='templates')
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
@@ -20,11 +20,18 @@ def validate_email(email):
         return True, None, None
 
 
-@auth.route('/')
-def hello():
-    user = User.query.all()
-    return str(user)
-    # return 'Hello, World!'
+@jwt_required(locations=['cookies'])
+def render_index(request):
+    current_user = get_jwt_identity()
+
+
+@auth.route('/', methods=['GET'])
+def index():
+    if "access_token" in request.cookies.keys():
+        render_index(request)
+    else:
+        with app.app_context():
+            return render_template("auth/register.html")
 
 
 # update account
@@ -164,4 +171,4 @@ def create_user():
     refresh_token = create_refresh_token(identity=user.id)
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
-    return resp, 200
+    return resp, 201
