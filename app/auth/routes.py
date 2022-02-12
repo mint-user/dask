@@ -6,9 +6,9 @@ from app import app
 from app.auth.models import User, db
 from flask import request, jsonify, Blueprint, render_template
 from flask_bcrypt import Bcrypt
-from datetime import timedelta, datetime
 
-auth = Blueprint("auth", __name__, template_folder='templates')
+auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates', static_url_path='/static/auth')
+# auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates')
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
@@ -20,18 +20,18 @@ def validate_email(email):
         return True, None, None
 
 
-@jwt_required(locations=['cookies'])
-def render_index(request):
-    current_user = get_jwt_identity()
+# @jwt_required(locations=['cookies'])
+# def render_index(request):
+#     current_user = get_jwt_identity()
 
 
 @auth.route('/', methods=['GET'])
 def index():
-    if "access_token" in request.cookies.keys():
-        render_index(request)
-    else:
-        with app.app_context():
-            return render_template("auth/register.html")
+    # if "access_token" in request.cookies.keys():
+    #     render_index(request)
+    # else:
+    with app.app_context():
+        return render_template("auth/register.html")
 
 
 # update account
