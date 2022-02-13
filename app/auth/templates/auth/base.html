@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}{% endblock %}</title>
+    <title>DASK - {% block title %}{% endblock %}</title>
 </head>
-<body>
+<body style="max-width: fit-content;">
 
 <link rel="stylesheet" href="{{ url_for('auth.static', filename='style.css') }}">
 <nav>
-  <h1>{{ self.title() }}</h1>
+  <h1>DASK</h1>
   <ul>
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
     {% else %}
-      <li><a href="{{ url_for('auth.create_user') }}">Register</a>
-      <li><a href="{{ url_for('auth.login') }}">Log In</a>
+      {% if self.title() == "Login" %}
+        <li><a href="{{ url_for('auth.create_user') }}">Register</a>
+      {% else %}
+        <li><a href="{{ url_for('auth.login') }}">Log In</a>
+      {% endif %}
     {% endif %}
   </ul>
 </nav>

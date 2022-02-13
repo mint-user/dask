@@ -6,9 +6,10 @@ from app import app
 from app.auth.models import User, db
 from flask import request, jsonify, Blueprint, render_template
 from flask_bcrypt import Bcrypt
+import pdb
 
 auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates', static_url_path='/static/auth')
-# auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates')
+
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
@@ -31,7 +32,7 @@ def index():
     #     render_index(request)
     # else:
     with app.app_context():
-        return render_template("auth/register.html")
+        return render_template("auth/login.html")
 
 
 # update account
@@ -95,7 +96,9 @@ def logout():
 # login
 @auth.route('/api/v1/accounts/session', methods=['POST'])
 def login():
+    # breakpoint()
     print(request.data)
+    # print(request.form.to_dict(flat=False))
     # check request structure
     if 'email' not in request.json.keys() or 'password' not in request.json.keys():
         return {"error": "Bad request"}, 400
