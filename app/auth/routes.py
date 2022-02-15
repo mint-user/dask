@@ -100,6 +100,9 @@ def login():
     print(request.data)
     # print(request.form.to_dict(flat=False))
     # check request structure
+    if request.json is None:
+        return {"error": "Bad request"}, 400
+
     if 'email' not in request.json.keys() or 'password' not in request.json.keys():
         return {"error": "Bad request"}, 400
 
