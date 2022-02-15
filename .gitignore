@@ -5,3 +5,4 @@ example.sqlite
 *.sqlite
 /example.sqlite-journal
 /example.sqlite
+test/allure_results
