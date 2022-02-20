@@ -5,11 +5,17 @@
 {% endblock %}
 
 {% block content %}
-  <form action="#" method="post" style="width: 400px;">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
+<!--  <form action="#" method="post" style="width: 400px;">-->
+    <div style="width: 400px;">
+      <div class="field">
+        <label for="email">email</label>
+        <input name="email" id="email" required>
+      </div>
+    <div class="field">
+      <label for="password">Password</label>
+      <input type="password" name="password" id="password" required>
+    </div>
     <input type="submit" value="Login" id="submit" onclick="makeRequest()">
-  </form>
+    </div>
+<!--  </form>-->
 {% endblock %}

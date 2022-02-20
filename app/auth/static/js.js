@@ -13,13 +13,19 @@ if (!xhr) {
 //  document.getElementById("submit").addEventListener('click', makeRequest);
 
 function makeRequest() {
-    let email = document.getElementById("username").value
+    let email = document.getElementById("email").value
+    let password = document.getElementById("password").value
     console.log('Fetching updated data.');
     xhr.open("POST", "/api/v1/accounts/session", true);
+    xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
     xhr.onload = function() {
         updateDisplay(xhr.status, xhr.response);
     }
-    xhr.send({"email": email});
+    let body = JSON.stringify({"email": email, "password": password})
+//    let body = {"email": email, "password": password}
+    console.log(body)
+    console.log(typeof(body))
+    xhr.send(body);
 }
 
 function updateDisplay(status, response){

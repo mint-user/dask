@@ -96,12 +96,12 @@ def logout():
 # login
 @auth.route('/api/v1/accounts/session', methods=['POST'])
 def login():
+    print("LOGIN REQUEST", request.data)
     # breakpoint()
-    print(request.data)
     # print(request.form.to_dict(flat=False))
     # check request structure
-    if request.json is None:
-        return {"error": "Bad request"}, 400
+    if not request.is_json:
+        return {"error": "Bad request: should be in JSON format"}, 400
 
     if 'email' not in request.json.keys() or 'password' not in request.json.keys():
         return {"error": "Bad request"}, 400
@@ -131,9 +131,9 @@ def login():
 def create_user():
     """
     create new user
+    {"email": "qwe@qwe", "password": "oIwi5jdPJlLGzba"}
     """
-    print("POST REQUEST=====================")
-    print(request.data)
+    print("create user ", request.data)
     # check fields
     if not ("email" in request.json.keys() and "password" in request.json.keys()):
         return {"error": "Request should contain 'email' and 'password' fields"}, 400
