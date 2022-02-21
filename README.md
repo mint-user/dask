@@ -1,4 +1,5 @@
 # Dask
+poetry run python run.py
 
 ## Models
 
