@@ -91,13 +91,14 @@ def login():
     print("LOGIN REQUEST", request.data)
 
     try:
-        user = LoginCredentials.parse_raw(request.data).user
+        creds = Credentials.parse_raw(request.data)
+        user = LoginCredentials(email=creds.email, password=creds.password).user
     except ValidationError as e:
         errors = json.loads(e.json())
         print(e)
         return dict(code=-1, msg=errors), 400
 
-    resp = jsonify({"msg": "login successful"})
+    resp = jsonify(code=0, msg="Successful login", email=user.email)
     access_token = create_access_token(identity=user.id)
     refresh_token = create_refresh_token(identity=user.id)
     set_access_cookies(resp, access_token)
@@ -113,9 +114,9 @@ class Credentials(BaseModel):
 class LoginCredentials(Credentials):
     @root_validator
     def email_registered(cls, values):
-        print(values)
         email = values.get('email')
         password = values.get('password')
+
         user = User.query.filter(User.email == email).first()
         if user is None:
             raise ValueError("Wrong email or password")
@@ -189,8 +190,4 @@ def create_user():
     db.session.commit()
 
     resp = jsonify({"msg": "registration successful"})
-    # access_token = create_access_token(identity=user.id)
-    # refresh_token = create_refresh_token(identity=user.id)
-    # set_access_cookies(resp, access_token)
-    # set_refresh_cookies(resp, refresh_token)
     return resp, 201
