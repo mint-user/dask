@@ -3,14 +3,14 @@ from flask_jwt_extended import create_access_token, JWTManager, set_access_cooki
     get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity
 
 from app import app
+from app.auth import auth
 from app.auth.models import User, db
-from flask import request, jsonify, Blueprint, render_template
+from flask import request, jsonify, render_template
 from flask_bcrypt import Bcrypt
 from pydantic import ValidationError
 
 from app.auth.validators import RegistrationCredentials, Credentials, LoginCredentials
 
-auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates', static_url_path='/static/auth')
 
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
@@ -57,7 +57,8 @@ def update_user():
     db.session.add(user)
     db.session.commit()
 
-    resp = jsonify({"msg": "successful update"})
+    # resp = jsonify({"msg": "successful update"})
+    resp = jsonify(code=0, msg="Successful update", email=user.email)
     return resp
 
 
