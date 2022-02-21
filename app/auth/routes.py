@@ -1,5 +1,4 @@
 import json
-import re
 from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
     get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity
 
@@ -7,7 +6,9 @@ from app import app
 from app.auth.models import User, db
 from flask import request, jsonify, Blueprint, render_template
 from flask_bcrypt import Bcrypt
-from pydantic import BaseModel, ValidationError, validator, root_validator
+from pydantic import ValidationError
+
+from app.auth.validators import RegistrationCredentials, Credentials, LoginCredentials
 
 auth = Blueprint("auth", __name__, static_folder="static", template_folder='templates', static_url_path='/static/auth')
 
@@ -104,64 +105,6 @@ def login():
     set_access_cookies(resp, access_token)
     set_refresh_cookies(resp, refresh_token)
     return resp
-
-
-class Credentials(BaseModel):
-    email: str
-    password: str
-
-
-class LoginCredentials(Credentials):
-    @root_validator
-    def email_registered(cls, values):
-        email = values.get('email')
-        password = values.get('password')
-
-        user = User.query.filter(User.email == email).first()
-        if user is None:
-            raise ValueError("Wrong email or password")
-
-        # check password
-        pass_hash = user.password
-        print("CHECKING PASSWORD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        if not bcrypt.check_password_hash(pass_hash, password):
-            raise ValueError("Wrong email or password")
-
-        return dict(user=user)
-
-
-class RegistrationCredentials(Credentials):
-    @validator('email')
-    def email_should_contain_dog(cls, email):
-        if "@" not in email:
-            raise ValueError("Email must contain '@")
-
-        return email
-
-    @validator('email')
-    def email_not_registered(cls, email):
-        user = User.query.filter(User.email == email).first()
-        print(user)
-        if user is not None:
-            raise ValueError("Email is already used")
-
-        return email
-
-    @validator('password')
-    def password_should_be_strong(cls, password):
-        if 20 <= len(password) or len(password) <= 8:
-            raise ValueError("Password should contain 8..20 characters")
-
-        if re.search("[a-z]", password) is None:
-            raise ValueError("Password should contain lowercase letters")
-
-        if re.search("[A-Z]", password) is None:
-            raise ValueError("Password should contain uppercase letters")
-
-        if re.search("\d", password) is None:
-            raise ValueError("Password should contain digits")
-
-        return password
 
 
 # register
