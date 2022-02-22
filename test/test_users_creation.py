@@ -1,8 +1,5 @@
-from datetime import datetime
-
 import pytest
 import requests
-# from pytest_lazyfixture
 
 
 class TestUserCreation:
@@ -50,25 +47,19 @@ class TestUserCreation:
         print(resp.text)
         assert resp.status_code == code
         assert resp.json()["error"] == mess
-        user = get_user_by_email(testuser_data['email'])
         # print(resp.headers)
         assert resp.cookies.get_dict() == {}
-        # print("user: {}", user)
 
     @pytest.mark.parametrize("test_data", [pytest.lazy_fixture('registration_data')])
-    def test_create_user_validations(self, API_URL, delete_user_by_email, get_user_by_email, test_data):
+    def test_create_user_validations(self, API_URL, sure_user_not_exists, get_user_by_email, test_data):
         json, code, mess = test_data
-        delete_user_by_email(json['email'])
         resp = requests.post(API_URL + "/api/v1/accounts", json=json)
         print(resp.text)
         assert resp.status_code == code
         assert resp.json()['msg'][0]['msg'] == mess
         assert get_user_by_email(json['email']) is None
 
-    def test_create_user(self, API_URL, delete_user_by_email, get_user_by_email, testuser_data):
-        # setup
-        delete_user_by_email(testuser_data['email'])
-
+    def test_create_user(self, API_URL, sure_user_not_exists, get_user_by_email, testuser_data):
         # create user
         resp = requests.post(API_URL + "/api/v1/accounts",
                              json={"email": testuser_data['email'], "password": "pqwe123QWDsdf"})

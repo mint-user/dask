@@ -55,12 +55,12 @@ def is_user_logged_in_by_email():
 @pytest.fixture(scope="function")
 def sure_user_exists():
     def _method(email, password):
-        tech_delete_user_by_email(email)
+        _delete_user_by_email(email)
         tech_insert_user(email, password)
     return _method
 
 
-def tech_delete_user_by_email(email=tech_testuser_data()['email']):
+def _delete_user_by_email(email=tech_testuser_data()['email']):
     user = tech_get_user_by_email(email)
     if user is not None:
         db.session.delete(user)
@@ -70,15 +70,15 @@ def tech_delete_user_by_email(email=tech_testuser_data()['email']):
 @pytest.fixture(scope="function")
 def delete_user_by_email():
     def _method(email):
-        tech_delete_user_by_email(email)
+        _delete_user_by_email(email)
     return _method
 
 
 @pytest.fixture(scope="function")
-def sure_user_not_exists(email):
-    tech_delete_user_by_email(email)
+def sure_user_not_exists(email=tech_testuser_data()['email']):
+    _delete_user_by_email(email)
     yield
-    tech_delete_user_by_email(email)
+    _delete_user_by_email(email)
 
 
 @pytest.fixture(scope="function")
