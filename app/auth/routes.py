@@ -1,11 +1,12 @@
 import json
 from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
     get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity
+from werkzeug.utils import redirect
 
 from app import app
 from app.auth import auth
 from app.auth.models import User, db
-from flask import request, jsonify, render_template
+from flask import request, jsonify, render_template, make_response
 from flask_bcrypt import Bcrypt
 from pydantic import ValidationError
 
@@ -77,12 +78,11 @@ def refresh():
 
 
 # logout
-@auth.route('/api/v1/accounts/session', methods=['DELETE'])
+@auth.route('/api/v1/accounts/logout', methods=['GET'])
 @jwt_required(locations=['cookies'])
 def logout():
     print(request.data)
-
-    resp = jsonify({"msg": "logout successful"})
+    resp = make_response(redirect('/'))
     unset_jwt_cookies(resp)
     return resp
 

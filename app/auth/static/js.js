@@ -14,27 +14,17 @@ if (!xhr) {
 err_block = document.getElementById("error");
 
 
-function makeRequest() {
-    let email = document.getElementById("email").value
-    let password = document.getElementById("password").value
-    console.log('Fetching updated data.');
-    xhr.open("POST", "/api/v1/accounts/session", true);
+function makeRequest(reqType, URL, funcOnLoad, data) {
+    console.log(reqType, URL, funcOnLoad, data);
+    xhr.open(reqType, URL, true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
-    xhr.onload = function() {
-        Login(xhr.status, xhr.response);
-    }
-    let body = JSON.stringify({"email": email, "password": password})
-//    let body = {"email": email, "password": password}
-    console.log(body)
-    console.log(typeof(body))
-    err_block.innerHTML = ""
-    xhr.send(body);
+    xhr.onload = function() { funcOnLoad.call(this, xhr.status, xhr.response) }
+    xhr.send(data);
 }
 
-function Login(status, response){
+function handleLogin(status, response){
     console.log(status, JSON.parse(response));
     if (status === 400) {
-//        alert(response);
         JSON.parse(response).msg.forEach((err) => {
             console.log(err);
             err_block.innerText += err.msg
@@ -42,5 +32,20 @@ function Login(status, response){
         })
     } else if (status === 200) {
         console.log("LOGGED IN!")
+        document.getElementById("nav_buttons").innerHTML = `<li><a href=# onclick='Profile();'>${JSON.parse(response).email}</a></li>
+        <li><a href="/api/v1/accounts/logout">Logout</a></li>`
+        document.getElementById("content").innerHTML = ""
     }
+}
+
+function Login(status, response){
+    let email = document.getElementById("email").value
+    let password = document.getElementById("password").value
+    let reqData = JSON.stringify({"email": email, "password": password})
+    err_block.innerHTML = ""
+    makeRequest("POST", "/api/v1/accounts/session", handleLogin, reqData)
+}
+
+function Logout(){
+    document.getElementById("nav_buttons").innerHTML = "<li><a href=# onclick='Register();'>Register</a></li>"
 }
