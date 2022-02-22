@@ -37,6 +37,7 @@ def API_URL():
 def tech_get_user_by_email(email):
     return User.query.filter(User.email == email).first()
 
+
 def tech_insert_user(email=tech_testuser_data()['email'],
                      password=tech_testuser_data()['pass_hash']):
     user = User(email=email,
@@ -52,12 +53,17 @@ def is_user_logged_in_by_email():
     return _method
 
 
+# @pytest.fixture(scope="function")
+# def sure_user_exists():
+#     def _method(email, password):
+#         _delete_user_by_email(email)
+#         tech_insert_user(email, password)
+#     return _method
 @pytest.fixture(scope="function")
-def sure_user_exists():
-    def _method(email, password):
-        _delete_user_by_email(email)
-        tech_insert_user(email, password)
-    return _method
+def sure_user_exists(email=tech_testuser_data()['email'], password=tech_testuser_data()['pass_hash']):
+    _delete_user_by_email(email)
+    tech_insert_user(email, password)
+    yield
 
 
 def _delete_user_by_email(email=tech_testuser_data()['email']):
@@ -85,5 +91,13 @@ def sure_user_not_exists(email=tech_testuser_data()['email']):
 def get_user_by_email():
     def _method(email):
         return tech_get_user_by_email(email)
-
     return _method
+
+
+@pytest.fixture(params=[
+        ({"email": "qwewasd@qwe1111", "password": "1"}, 400, "Wrong email or password"),
+        ({"email": tech_testuser_data()['email'], "password": "111"}, 400, "Wrong email or password"),
+        ({}, 400, "field required")
+    ])
+def login_test_data(request):
+    return request.param

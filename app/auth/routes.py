@@ -97,7 +97,7 @@ def login():
         user = LoginCredentials(email=creds.email, password=creds.password).user
     except ValidationError as e:
         errors = json.loads(e.json())
-        print(e)
+        print("LOGIN error", e)
         return dict(code=-1, msg=errors), 400
 
     resp = jsonify(code=0, msg="Successful login", email=user.email)
@@ -128,7 +128,7 @@ def create_user():
     email = creds.email
     password = creds.password
 
-    pass_hash = bcrypt.generate_password_hash(password)
+    pass_hash = bcrypt.generate_password_hash(password).decode('utf-8')
     user = User(email=email, password=pass_hash)
     db.session.add(user)
     db.session.commit()

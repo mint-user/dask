@@ -28,7 +28,7 @@ class LoginCredentials(Credentials):
         # check password
         pass_hash = user.password
         print("CHECKING PASSWORD!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        if not bcrypt.check_password_hash(pass_hash, password):
+        if not bcrypt.check_password_hash(pass_hash, password.encode('utf-8')):
             raise ValueError("Wrong email or password")
 
         return dict(user=user)
