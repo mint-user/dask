@@ -10,6 +10,20 @@ def tech_testuser_data():
             "token": "504dc0bf28a30e67a6929126b1e91cc1"}
 
 
+@pytest.fixture(params=[
+        ({"email": tech_testuser_data()['email']}, 400, "field required"),
+        ({"email": "email", "password": "pqwe123QWDsdf"}, 400, "Email must contain '@'"),
+        ({"email": tech_testuser_data()['email'], "password": "pqe1F"}, 400, "Password should contain 8..20 characters"),
+        ({"email": tech_testuser_data()['email'], "password": "pqe1Fsssssssssssssssssssssssssssssssssssssssssssssssss"}, 400,
+         "Password should contain 8..20 characters"),
+        ({"email": tech_testuser_data()['email'], "password": "DSDSGSDF988593285"}, 400,
+         "Password should contain lowercase letters"),
+        ({"email": tech_testuser_data()['email']}, 400, "field required")
+    ])
+def registration_data(request):
+    return request.param
+
+
 @pytest.fixture(scope="function")
 def testuser_data():
     return tech_testuser_data()
@@ -22,16 +36,6 @@ def API_URL():
 
 def tech_get_user_by_email(email):
     return User.query.filter(User.email == email).first()
-
-
-def tech_delete_user_by_email(email=tech_testuser_data()['email']):
-    user = tech_get_user_by_email(email)
-    print('*****************/////////////////')
-    print(user)
-    if user is not None:
-        db.session.delete(user)
-        db.session.commit()
-
 
 def tech_insert_user(email=tech_testuser_data()['email'],
                      password=tech_testuser_data()['pass_hash']):
@@ -56,18 +60,25 @@ def sure_user_exists():
     return _method
 
 
+def tech_delete_user_by_email(email=tech_testuser_data()['email']):
+    user = tech_get_user_by_email(email)
+    if user is not None:
+        db.session.delete(user)
+        db.session.commit()
+
+
 @pytest.fixture(scope="function")
 def delete_user_by_email():
     def _method(email):
-        # user = tech_get_user_by_email(email)
-        # print('*****************/////////////////')
-        # print(user)
-        # if user is not None:
-        #     db.session.delete(user)
-        #     db.session.commit()
         tech_delete_user_by_email(email)
-
     return _method
+
+
+@pytest.fixture(scope="function")
+def sure_user_not_exists(email):
+    tech_delete_user_by_email(email)
+    yield
+    tech_delete_user_by_email(email)
 
 
 @pytest.fixture(scope="function")

@@ -9,13 +9,16 @@
     <div style="width: 400px;">
       <div class="field">
         <label for="email">email</label>
-        <input name="email" id="email" required>
+        <input name="email" id="email" value="123@56" required>
       </div>
     <div class="field">
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" required>
+      <input type="password" name="password" id="password" value="QWE123qwe" required>
     </div>
     <input type="submit" value="Login" id="submit" onclick="makeRequest()">
+        <div id="error" style="color: darkred;">
+
+        </div>
     </div>
 <!--  </form>-->
 {% endblock %}

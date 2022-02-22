@@ -34,11 +34,19 @@ class LoginCredentials(Credentials):
         return dict(user=user)
 
 
+# class AuthError(ValueError):
+#     def __init__(self, message, code=400):
+#         self.message = message
+#         self.code = code
+#         super().__init__(self.message, self.code)
+
+
 class RegistrationCredentials(Credentials):
     @validator('email')
     def email_should_contain_dog(cls, email):
         if "@" not in email:
-            raise ValueError("Email must contain '@")
+            raise ValueError("Email must contain '@'")
+            # raise AuthError("Email must contain '@", 406)
 
         return email
 

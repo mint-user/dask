@@ -11,6 +11,8 @@ if (!xhr) {
 //  (function() {
 //  var httpRequest;
 //  document.getElementById("submit").addEventListener('click', makeRequest);
+err_block = document.getElementById("error");
+
 
 function makeRequest() {
     let email = document.getElementById("email").value
@@ -19,18 +21,26 @@ function makeRequest() {
     xhr.open("POST", "/api/v1/accounts/session", true);
     xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8")
     xhr.onload = function() {
-        updateDisplay(xhr.status, xhr.response);
+        Login(xhr.status, xhr.response);
     }
     let body = JSON.stringify({"email": email, "password": password})
 //    let body = {"email": email, "password": password}
     console.log(body)
     console.log(typeof(body))
+    err_block.innerHTML = ""
     xhr.send(body);
 }
 
-function updateDisplay(status, response){
+function Login(status, response){
     console.log(status, JSON.parse(response));
     if (status === 400) {
-        alert(response);
+//        alert(response);
+        JSON.parse(response).msg.forEach((err) => {
+            console.log(err);
+            err_block.innerText += err.msg
+            err_block.appendChild(document.createElement("br"))
+        })
+    } else if (status === 200) {
+        console.log("LOGGED IN!")
     }
 }

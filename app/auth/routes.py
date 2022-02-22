@@ -122,7 +122,7 @@ def create_user():
         creds = RegistrationCredentials.parse_raw(request.data)
     except ValidationError as e:
         errors = json.loads(e.json())
-        print(e)
+        print("RegistrationCredentials", e.json())
         return dict(code=-1, msg=errors), 400
 
     email = creds.email
@@ -133,5 +133,6 @@ def create_user():
     db.session.add(user)
     db.session.commit()
 
-    resp = jsonify({"msg": "registration successful"})
-    return resp, 201
+    # resp = jsonify({"msg": "registration successful"})
+    # return resp, 201
+    return dict(code=0, msg="registration successful"), 201

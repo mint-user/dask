@@ -10,7 +10,7 @@
 <link>
 <nav>
   <h1>DASK</h1>
-  <ul>
+  <ul id="nav_buttons">
     {% if g.user %}
       <li><span>{{ g.user['username'] }}</span>
       <li><a href="{{ url_for('auth.logout') }}">Log Out</a>

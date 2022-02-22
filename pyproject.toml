@@ -43,6 +43,7 @@ pydentic = "^0.0.1-alpha.3"
 pytest = "6.2.5"
 allure-pytest = "2.9.45"
 allure-python-commons = "2.9.45"
+pytest-lazy-fixture = "^0.6.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
