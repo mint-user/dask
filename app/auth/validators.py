@@ -1,4 +1,5 @@
 import re
+from typing import Optional
 
 from app import app
 from app.auth.models import User
@@ -10,9 +11,13 @@ from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 
 
+
+
+
 class Credentials(BaseModel):
     email: str
     password: str
+    user_id: Optional[int]
 
 
 class LoginCredentials(Credentials):
@@ -46,18 +51,28 @@ class RegistrationCredentials(Credentials):
     def email_should_contain_dog(cls, email):
         if "@" not in email:
             raise ValueError("Email must contain '@'")
-            # raise AuthError("Email must contain '@", 406)
-
         return email
 
-    @validator('email')
-    def email_not_registered(cls, email):
-        user = User.query.filter(User.email == email).first()
-        print(user)
-        if user is not None:
-            raise ValueError("Email is already used")
+    # @validator('email')
+    # def email_not_registered(cls, email):
+    #     user = User.query.filter(User.email == email).first()
+    #     print(user)
+    #     if user is not None:
+    #         raise ValueError("Email is already used")
+    #     return email
 
-        return email
+    # @root_validator
+    # def email_not_registered(cls, values):
+    #     email = values.get('email')
+    #     password = values.get('password')
+    #     user_id = values.get('user_id')
+    #     user = User.query.filter(User.email == email).first()
+    #     print(user)
+    #     if user.id != user_id:
+    #         if user is not None:
+    #             raise ValueError("Email is already used")
+    #     # return email
+    #     return dict(email=email, password=password)
 
     @validator('password')
     def password_should_be_strong(cls, password):

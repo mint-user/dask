@@ -12,21 +12,40 @@ from pydantic import ValidationError
 
 from app.auth.validators import RegistrationCredentials, Credentials, LoginCredentials
 
-
 bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 
 
+def _email_is_free(email, user_id=None):
+    user = User.query.filter(User.email == email).first()
+    print(user)
+    if user_id is None:  # register
+        if user is not None:
+            # breakpoint()
+            raise ValueError("Email is already used")
+    else:  # update
+        if (user is not None) and user.id != user_id:
+            raise ValueError("Email is already used")
+
 # @jwt_required(locations=['cookies'])
 # def render_index(request):
-#     current_user = get_jwt_identity()
 
 
 @auth.route('/', methods=['GET'])
 def index():
-    # if "access_token" in request.cookies.keys():
-    #     render_index(request)
-    # else:
+    if "access_token" in request.cookies.keys():
+        # current_user = get_jwt_identity()
+        # print(current_user)
+        resp = make_response(redirect('/tasks'))
+        return resp
+    else:
+        resp = make_response(redirect('/login'))
+        unset_jwt_cookies(resp)
+        return resp
+
+
+@auth.route('/login', methods=['GET'])
+def login_page():
     with app.app_context():
         return render_template("auth/login.html")
 
@@ -38,17 +57,29 @@ def update_user():
     print("update REQUEST", request.data)
 
     # check fields
+    user_id = get_jwt_identity()
+    # obj_to_parse = json.loads(request.data)
+    # obj_to_parse["user_id"] = user_id
+    # obj_to_parse = json.dumps(obj_to_parse)
     try:
         creds = RegistrationCredentials.parse_raw(request.data)
+        # breakpoint()
     except ValidationError as e:
         errors = json.loads(e.json())
         print(e)
         return dict(code=-1, msg=errors), 400
 
     user_id = get_jwt()["sub"]
-    user = User.query.filter(User.id == user_id).first()
-
     email = creds.email
+    try:
+        _email_is_free(email, user_id=user_id)
+    except ValueError as e:
+        return dict(code=-1, msg=[{"loc": ["email"], "msg": str(e), "type": "value_error"}]), 400
+
+    user = User.query.filter(User.id == user_id).first()
+    if user is None:
+        return dict(code=-1, msg=[{"loc": ["email"], "msg": "User is deleted", "type": "value_error"}]), 400
+
     password = creds.password
 
     pass_hash = bcrypt.generate_password_hash(password)
@@ -117,7 +148,7 @@ def create_user():
     """
     print("REQUEST create user ", request.data)
 
-    # check fields
+    # validate fields
     try:
         creds = RegistrationCredentials.parse_raw(request.data)
     except ValidationError as e:
@@ -125,14 +156,30 @@ def create_user():
         print("RegistrationCredentials", e.json())
         return dict(code=-1, msg=errors), 400
 
+    # email is not registered
     email = creds.email
-    password = creds.password
+    # user = User.query.filter(User.email == email).first()
+    # print(user)
+    # if user is not None:
+    #     return dict(code=-1, msg=[{"loc": ["email"], "msg": "Email is already used", "type": "value_error"}]), 400
+    try:
+        _email_is_free(email, user_id=None)
+        # breakpoint()
+    except ValueError as e:
+        # breakpoint()
+        return dict(code=-1, msg=[{"loc": ["email"], "msg": str(e), "type": "value_error"}]), 400
 
+    password = creds.password
     pass_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+
     user = User(email=email, password=pass_hash)
     db.session.add(user)
     db.session.commit()
+    # breakpoint()
 
     # resp = jsonify({"msg": "registration successful"})
     # return resp, 201
     return dict(code=0, msg="registration successful"), 201
+
+
+

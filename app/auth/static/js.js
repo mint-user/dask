@@ -32,9 +32,10 @@ function handleLogin(status, response){
         })
     } else if (status === 200) {
         console.log("LOGGED IN!")
-        document.getElementById("nav_buttons").innerHTML = `<li><a href=# onclick='Profile();'>${JSON.parse(response).email}</a></li>
-        <li><a href="/api/v1/accounts/logout">Logout</a></li>`
-        document.getElementById("content").innerHTML = ""
+        window.location.replace("/tasks");
+//        document.getElementById("nav_buttons").innerHTML = `<li><a href=# onclick='Profile();'>${JSON.parse(response).email}</a></li>
+//        <li><a href="/api/v1/accounts/logout">Logout</a></li>`
+//        document.getElementById("content").innerHTML = ""
     }
 }
 
