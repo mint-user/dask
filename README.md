@@ -1,4 +1,5 @@
 # Dask
+poetry run python run.py
 
 ## Models
 
@@ -33,7 +34,7 @@
 | no email or password fields                                       | 400  | Request should contain "email" and "password" fields<br/>__User has not been created__                                                                                               |
 | email or password are not valid                                   | 400  | Email should contain "@" <br/> Password is too short<br/>Password is too long<br/>Password should contain uppercase, lowercase letters and numbers<br/>__User has not been created__ |
 | valid email,<br/>valid password                                   | 201  | OK. __User has been created__                                                                                                                                                        |
-| valid email,<br/>valid password,<br/> user with this email exists | 202  | Email is already used                                                                                                                                                                |
+| valid email,<br/>valid password,<br/> user with this email exists | 406  | Email is already used                                                                                                                                                                |
 
 ```json
 {

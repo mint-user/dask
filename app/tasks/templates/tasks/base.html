@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>DASK - {% block title %}{% endblock %}</title>
+</head>
+<body style="max-width: fit-content;">
+
+<link rel="stylesheet" href="{{ url_for('tasks.static', filename='style.css') }}">
+<link>
+<nav>
+  <h1>DASK</h1>
+  <ul id="nav_buttons">
+      <li><span>{{ current_user }}</span>
+      <li><a href="/api/v1/accounts/logout">Logout</a>
+  </ul>
+</nav>
+<section class="content" id="content">
+  <header>
+    {% block header %}{% endblock %}
+  </header>
+  {% block content %}{% endblock %}
+</section>
+</body>
+<script src="static/tasks/js.js"></script>
+</html>

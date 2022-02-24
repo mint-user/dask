@@ -1,0 +1,12 @@
+[default]
+key = "value"
+a_boolean = false
+number = 1234
+
+[development]
+HOST = "localhost"
+PORT = 8080
+
+[production]
+key = "production value"
+SQLALCHEMY_DB_URI = "postgresql://..."

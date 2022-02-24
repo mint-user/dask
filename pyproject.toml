@@ -7,8 +7,6 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-allure-pytest = "2.9.45"
-allure-python-commons = "2.9.45"
 attrs = "21.4.0"
 bcrypt = "3.2.0"
 certifi = "2021.10.8"
@@ -37,10 +35,19 @@ SQLAlchemy = "1.4.31"
 toml = "0.10.2"
 urllib3 = "1.26.8"
 Werkzeug = "2.0.2"
+pydantic = "^1.9.0"
+dynaconf = "^3.1.7"
+pydentic = "^0.0.1-alpha.3"
 
 [tool.poetry.dev-dependencies]
 pytest = "6.2.5"
+allure-pytest = "2.9.45"
+allure-python-commons = "2.9.45"
+pytest-lazy-fixture = "^0.6.3"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+start = "dask.run:run"
