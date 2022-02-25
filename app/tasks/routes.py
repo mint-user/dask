@@ -85,7 +85,7 @@ def delete_task():
         return dict(code=-1, msg="this is not your task"), 400
     db.session.delete(the_task)
     db.session.commit()
-    return dict(code=0), 201
+    return dict(code=0), 200
 
 
 @tasks.route('/api/v1/tasks', methods=['GET'])
@@ -99,7 +99,7 @@ def index():
     # res = [dict(id=s.id, name=s.name) for s in res]
     res = [dict(id=s.id, name=Markup(s.name).striptags()) for s in res]
 
-    return jsonify(code=0, tasks=res), 201
+    return jsonify(code=0, tasks=res), 200
 
 
 @tasks.route('/api/v1/tasks', methods=['POST'])
@@ -120,7 +120,7 @@ def create():
     # creds = collections.defaultdict(creds)
     final_creds = collections.defaultdict(None)
     for key, value in creds:
-        final_creds[key] = value
+        final_creds[key] = None if value is None else value.strip()
     print(final_creds)
     task = Task(name=final_creds['name'], desc=final_creds['desc'], user_id=user_id,
                 parent_task_id=final_creds['parent_task_id'])
@@ -143,7 +143,7 @@ class TaskAttrs(BaseModel):
     @validator("name")
     def not_empty(cls, name):
         print("inside NAME validtor")
-        if len(name) == 0:
+        if len(name.strip()) == 0:
             raise ValueError("Task name should not be empty")
             # pass
         return name

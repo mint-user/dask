@@ -96,6 +96,12 @@ function showFormForNewTask(){
     btnConfirm.id = "btnConfirm";
     actionsCell.appendChild(btnConfirm);
 
+    // add element for err messages
+    let errMess = document.createElement("span");
+        // errMess.innerText = JSON.parse(response).msg[0].msg;
+    errMess.id = "errMess";
+    actionsCell.appendChild(errMess);
+
     //add Cancel button
     let btnCancel = document.createElement("a");
     btnCancel.innerText = "Hide"
@@ -114,10 +120,11 @@ function handleNewTaskResp(status, response) {
         loadTasks();
     } else {
         console.log(response);
-        let actionsCell = document.getElementById("actionsCell");
-        let errMess = document.createElement("span");
+        // let actionsCell = document.getElementById("actionsCell");
+        // let errMess = document.createElement("span");
+        let errMess = document.getElementById("errMess");
         errMess.innerText = JSON.parse(response).msg[0].msg;
-        actionsCell.appendChild(errMess);
+        // actionsCell.appendChild(errMess);
     }
 }
 
