@@ -34,21 +34,25 @@ def _email_is_free(email, user_id=None):
 
 @auth.route('/', methods=['GET'])
 def index():
-    if "access_token" in request.cookies.keys():
-        # current_user = get_jwt_identity()
-        # print(current_user)
+    try:
+        # breakpoint()
+        verify_jwt_in_request(locations=['cookies'])
         resp = make_response(redirect('/tasks'))
         return resp
-    else:
-        resp = make_response(redirect('/login'))
-        unset_jwt_cookies(resp)
-        return resp
+    except:
+        # resp = make_response(redirect('/login'))
+        # unset_jwt_cookies(resp)
+        # return resp
+        with app.app_context():
+            return render_template("auth/login.html")
 
 
-@auth.route('/login', methods=['GET'])
-def login_page():
-    with app.app_context():
-        return render_template("auth/login.html")
+
+
+# @auth.route('/login', methods=['GET'])
+# def login_page():
+#     with app.app_context():
+#         return render_template("auth/login.html")
 
 
 # update account
@@ -112,12 +116,13 @@ def refresh():
 # logout
 @auth.route('/api/v1/accounts/logout', methods=['GET'])
 def logout():
-    print(request.data)
+    # print(request.data)
     response = make_response(redirect('/'))
     try:
-        verify_jwt_in_request(optional=True, locations=['cookies'])
-    except ExpiredSignatureError:
+        # verify_jwt_in_request(optional=True, locations=['cookies'])
         unset_jwt_cookies(response)
+    except ExpiredSignatureError:
+        pass
     finally:
         return response
 

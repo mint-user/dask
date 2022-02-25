@@ -5,6 +5,7 @@ from typing import Optional
 
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, get_jwt, create_access_token, \
     set_access_cookies, verify_jwt_in_request, unset_jwt_cookies
+from flask_jwt_extended.exceptions import NoAuthorizationError
 from jinja2 import Markup
 from jwt import ExpiredSignatureError
 from pydantic import BaseModel, ValidationError, validator
@@ -47,8 +48,10 @@ def my_expired_token_callback(jwt_header, jwt_payload):
 def index_html():
     # check access token
     try:
-        verify_jwt_in_request(optional=True, locations=['cookies'])
-    except ExpiredSignatureError:
+        # verify_jwt_in_request(optional=True, locations=['cookies'])
+        # breakpoint()
+        verify_jwt_in_request(locations=['cookies'])
+    except (ExpiredSignatureError, NoAuthorizationError):
     # if not get_jwt()['fresh']:
         response = make_response(redirect('/'))
         unset_jwt_cookies(response)
