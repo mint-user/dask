@@ -6,13 +6,99 @@
 	},
 	"item": [
 		{
+			"name": "tasks",
+			"item": [
+				{
+					"name": "create task",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"newC task\"\n    ,\"parent_task_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get my tasks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/tasks",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"tasks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "create_user",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\"email\": \"qwe@qwe\",\n\"password\": \"oIwi5jdPJlLGzba\"}",
+					"raw": "{\"email\": \"123@567\",\n\"password\": \"oIwi5jdPJlLGzba\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/accounts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"accounts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create_user PROD",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"123@567\",\n\"password\": \"oIwi5jdPJlLGzba\"}",
 					"options": {
 						"raw": {
 							"language": "json"

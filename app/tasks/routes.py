@@ -51,18 +51,16 @@ def index_html():
         # verify_jwt_in_request(optional=True, locations=['cookies'])
         # breakpoint()
         verify_jwt_in_request(locations=['cookies'])
-    except (ExpiredSignatureError, NoAuthorizationError):
+        user_id = get_jwt_identity()
+        user = User.query.get(user_id)
+        assert user is not None
+        with app.app_context():
+            return render_template("tasks/index.html", current_user=user.email)
+    except (ExpiredSignatureError, NoAuthorizationError, AssertionError):
     # if not get_jwt()['fresh']:
         response = make_response(redirect('/'))
         unset_jwt_cookies(response)
         return response
-
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
-    # print(current_user) # this is just id
-    with app.app_context():
-        return render_template("tasks/index.html", current_user=user.email)
-    # return "TASKS"
 
 
 @tasks.route('/api/v1/tasks', methods=['DELETE'])
