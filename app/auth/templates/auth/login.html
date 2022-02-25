@@ -1,7 +1,7 @@
 {% extends 'auth/base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Login{% endblock %}</h1>
+  <h1 id="formTitle">{% block title %}Login{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
@@ -9,16 +9,15 @@
     <div style="width: 400px;">
       <div class="field">
         <label for="email">email</label>
-        <input name="email" id="email" value="123@56" required>
+        <input name="email" id="email" required>
       </div>
     <div class="field">
       <label for="password">Password</label>
-      <input type="password" name="password" id="password" value="QWE123qwe" required>
+      <input type="password" name="password" id="password" required>
     </div>
     <input type="submit" value="Login" id="submit" onclick="Login()">
-        <div id="error" style="color: darkred;">
-
-        </div>
+        <div id="error" style="color: darkred;"></div>
+        <div id="success" style="color: darkgreen;"></div>
     </div>
 <!--  </form>-->
 {% endblock %}

@@ -1,6 +1,7 @@
 import json
 from flask_jwt_extended import create_access_token, JWTManager, set_access_cookies, unset_jwt_cookies, jwt_required, \
-    get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity
+    get_jwt, create_refresh_token, set_refresh_cookies, get_jwt_identity, verify_jwt_in_request
+from jwt import ExpiredSignatureError
 from werkzeug.utils import redirect
 
 from app import app
@@ -110,12 +111,18 @@ def refresh():
 
 # logout
 @auth.route('/api/v1/accounts/logout', methods=['GET'])
-@jwt_required(locations=['cookies'])
 def logout():
     print(request.data)
-    resp = make_response(redirect('/'))
-    unset_jwt_cookies(resp)
-    return resp
+    response = make_response(redirect('/'))
+    try:
+        verify_jwt_in_request(optional=True, locations=['cookies'])
+    except ExpiredSignatureError:
+        unset_jwt_cookies(response)
+    finally:
+        return response
+
+
+
 
 
 # login

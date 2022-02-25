@@ -47,6 +47,7 @@ function renderTasks(status, response){
             for (var j = 0; j < col.length; j++) {
                 var tabCell = tr.insertCell(-1);
                 tabCell.innerHTML = data[i][col[j]];
+                // tabCell.innerHTML = html(data[i][col[j]]);
             }
 
             // add delete button

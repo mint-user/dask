@@ -11,16 +11,7 @@
 <nav>
   <h1>DASK</h1>
   <ul id="nav_buttons">
-    {% if g.user %}
-      <li><span>{{ g.user['username'] }}</span>
-      <li><a href="{{ url_for('auth.logout') }}">Log Out</a>
-    {% else %}
-      {% if self.title() == "Login" %}
-        <li><a href="{{ url_for('auth.create_user') }}">Register</a>
-      {% else %}
-        <li><a href=# onclick='Register();'>Register</a></li>
-      {% endif %}
-    {% endif %}
+        <li><a href=# onclick='showSignUpForm();'>Register</a></li>
   </ul>
 </nav>
 <section class="content" id="content">

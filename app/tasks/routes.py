@@ -4,27 +4,31 @@ from datetime import datetime, timezone, timedelta
 from typing import Optional
 
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, get_jwt, create_access_token, \
-    set_access_cookies
+    set_access_cookies, verify_jwt_in_request, unset_jwt_cookies
+from jinja2 import Markup
+from jwt import ExpiredSignatureError
 from pydantic import BaseModel, ValidationError, validator
 from sqlalchemy import select
+from werkzeug.utils import redirect
 
 from app import app, db
 from app.auth.models import User
 from app.tasks.models import Task
 from app.tasks import tasks
 
-from flask import request, jsonify, render_template, make_response
-
+from flask import request, jsonify, render_template, make_response, render_template_string
 
 jwt = JWTManager(app)
 
 
 @tasks.after_request
+# @tasks.before_request
 def refresh_expiring_jwts(response):
     try:
         exp_timestamp = get_jwt()["exp"]
         now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=5))
+        target_timestamp = datetime.timestamp(now + timedelta(seconds=20))
+        print(target_timestamp - exp_timestamp)
         if target_timestamp > exp_timestamp:
             access_token = create_access_token(identity=get_jwt_identity())
             set_access_cookies(response, access_token)
@@ -34,9 +38,22 @@ def refresh_expiring_jwts(response):
         return response
 
 
+@jwt.expired_token_loader
+def my_expired_token_callback(jwt_header, jwt_payload):
+    return jsonify(code="dave", err="I can't let you do that"), 401
+
+
 @tasks.route('/tasks', methods=['GET'])
-@jwt_required(locations=['cookies'])
 def index_html():
+    # check access token
+    try:
+        verify_jwt_in_request(optional=True, locations=['cookies'])
+    except ExpiredSignatureError:
+    # if not get_jwt()['fresh']:
+        response = make_response(redirect('/'))
+        unset_jwt_cookies(response)
+        return response
+
     user_id = get_jwt_identity()
     user = User.query.get(user_id)
     # print(current_user) # this is just id
@@ -63,9 +80,6 @@ def delete_task():
     # check user is owner
     if the_task.user.id != jwt_user_id:
         return dict(code=-1, msg="this is not your task"), 400
-    # breakpoint()
-    # the_task.delete()
-    # db.session.add(the_task)
     db.session.delete(the_task)
     db.session.commit()
     return dict(code=0), 201
@@ -79,8 +93,10 @@ def index():
     res = db.session.execute(select(Task.id, Task.name).where(Task.user_id == user_id).order_by(Task.id))
     # for row in res:
     #     print(f"{row.id}  {row.name}")
-    res = [dict(id=s.id, name=s.name) for s in res]
-    return dict(code=0, tasks=res), 201
+    # res = [dict(id=s.id, name=s.name) for s in res]
+    res = [dict(id=s.id, name=Markup(s.name).striptags()) for s in res]
+
+    return jsonify(code=0, tasks=res), 201
 
 
 @tasks.route('/api/v1/tasks', methods=['POST'])
@@ -103,7 +119,8 @@ def create():
     for key, value in creds:
         final_creds[key] = value
     print(final_creds)
-    task = Task(name=final_creds['name'], desc=final_creds['desc'], user_id=user_id, parent_task_id=final_creds['parent_task_id'])
+    task = Task(name=final_creds['name'], desc=final_creds['desc'], user_id=user_id,
+                parent_task_id=final_creds['parent_task_id'])
     print(task)
     db.session.add(task)
     db.session.commit()
