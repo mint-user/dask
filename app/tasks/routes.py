@@ -114,13 +114,21 @@ def create():
         print("TaskAttrs", e.json())
         return dict(code=-1, msg=errors), 400
 
-    # breakpoint()
     # creds = collections.defaultdict(creds)
+    print(creds)
     final_creds = collections.defaultdict(None)
     for key, value in creds:
         final_creds[key] = None if value is None else value
     print(final_creds)
-    # final_creds['name'] = final_creds['name'].strip()
+
+    parent_id = final_creds['parent_task_id']
+    print(parent_id)
+    if parent_id is not None:
+        parent = Task.query.filter(Task.id == parent_id, user_id == user_id).first()
+        print(parent)
+        if parent is None:
+            return dict(code=-1, msg=[{"loc": ["email"], "msg": f"You do not have task with id={parent_id} to make it parent", "type": "value_error"}]), 400
+
     task = Task(name=final_creds['name'], desc=final_creds['desc'], user_id=user_id,
                 parent_task_id=final_creds['parent_task_id'])
     print(task)

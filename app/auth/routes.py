@@ -47,14 +47,6 @@ def index():
             return render_template("auth/login.html")
 
 
-
-
-# @auth.route('/login', methods=['GET'])
-# def login_page():
-#     with app.app_context():
-#         return render_template("auth/login.html")
-
-
 # update account
 @auth.route('/api/v1/accounts', methods=['PATCH'])
 @jwt_required(locations=['cookies'])
