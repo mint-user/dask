@@ -118,8 +118,9 @@ def create():
     # creds = collections.defaultdict(creds)
     final_creds = collections.defaultdict(None)
     for key, value in creds:
-        final_creds[key] = None if value is None else value.strip()
+        final_creds[key] = None if value is None else value
     print(final_creds)
+    # final_creds['name'] = final_creds['name'].strip()
     task = Task(name=final_creds['name'], desc=final_creds['desc'], user_id=user_id,
                 parent_task_id=final_creds['parent_task_id'])
     print(task)
@@ -144,4 +145,4 @@ class TaskAttrs(BaseModel):
         if len(name.strip()) == 0:
             raise ValueError("Task name should not be empty")
             # pass
-        return name
+        return name.strip()

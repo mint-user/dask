@@ -6,13 +6,14 @@ class TestUserCreation:
 
     def test_server_is_up(self, API_URL):
         resp = requests.get(API_URL)
-        print(resp.text)
+        # print(resp.text)
         assert resp.status_code == 200
 
     @pytest.mark.parametrize("test_data", [pytest.lazy_fixture("update_user_validations_data")])
     def test_update_user_validations(self, API_URL, sure_user_exists, get_user_by_email, testuser_data,
-                                     delete_user_by_email, test_data):
+                                     delete_user_by_email, sure_user_exists_from_test, test_data):
         delete_user_by_email("not_already@existed_email")
+        sure_user_exists_from_test(email="existed@email")
         cookies = {}
         logged_in, json, stat_code, passed = test_data
         if logged_in:
@@ -25,10 +26,12 @@ class TestUserCreation:
         # response status
         assert upd_resp.status_code == stat_code
 
-        if passed:
-            assert get_user_by_email(testuser_data['email']) is None
-        else:
-            assert get_user_by_email(testuser_data['email']) is not None
+        # check in db
+        if 200 == stat_code:
+            if passed:
+                assert get_user_by_email(json['email']) is not None
+            else:
+                assert get_user_by_email(json['email']) is None
 
     def test_login(self, API_URL, sure_user_exists, get_user_by_email, testuser_data):
         resp = requests.post(API_URL + "/api/v1/accounts/session", json={"email": testuser_data['email'],

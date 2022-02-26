@@ -1,41 +1,15 @@
 import pytest
-from app.auth.models import User
-from app import db
+import requests
 
 
-def tech_testuser_data():
-    return {"email": "qwe@qwe",
-            "password": "oIwi5jdPJlLGzba",
-            "pass_hash": "$2b$12$VVaaR32gGCpWeCrFIVYuMuoVs/ypwfXRpZrrvXhJj3TQvDsbuSziy",
-            "token": "504dc0bf28a30e67a6929126b1e91cc1"}
-
-
-@pytest.fixture(params=[
-    (False, {"email": tech_testuser_data()['email'], "password": tech_testuser_data()['password']}, 401, False),
-    (True, {"email": "not_already@existed_email", "password": tech_testuser_data()['password']}, 200, True),
-    (True, {"email": tech_testuser_data()['email'], "password": tech_testuser_data()['password']}, 400, False)
-])
-def update_user_validations_data(request):
-    return request.param
-
-
-@pytest.fixture(params=[
-        ({"email": tech_testuser_data()['email']}, 400, "field required"),
-        ({"email": "email", "password": "pqwe123QWDsdf"}, 400, "Email must contain '@'"),
-        ({"email": tech_testuser_data()['email'], "password": "pqe1F"}, 400, "Password should contain 8..20 characters"),
-        ({"email": tech_testuser_data()['email'], "password": "pqe1Fsssssssssssssssssssssssssssssssssssssssssssssssss"}, 400,
-         "Password should contain 8..20 characters"),
-        ({"email": tech_testuser_data()['email'], "password": "DSDSGSDF988593285"}, 400,
-         "Password should contain lowercase letters"),
-        ({"email": tech_testuser_data()['email']}, 400, "field required")
-    ])
-def registration_data(request):
-    return request.param
-
-
-@pytest.fixture(scope="function")
-def testuser_data():
-    return tech_testuser_data()
+# @pytest.fixture(scope="module")
+# def user_is_logged_in(API_URL, testuser_data):
+#     def _method():
+#         resp = requests.post(f"{API_URL}/api/v1/accounts/session", json={"email": "dimas@js",
+#                                                                          "password": "QWE123qwe"})
+#         cookies = resp.cookies.get_dict()
+#         return cookies
+#     return _method
 
 
 @pytest.fixture(scope="session")
@@ -43,63 +17,22 @@ def API_URL():
     return "http://localhost:8080"
 
 
-def tech_get_user_by_email(email):
-    return User.query.filter(User.email == email).first()
+@pytest.fixture(scope="package")
+def tech_testuser_data():
+    return {"email": "qwe@qwe",
+            "password": "oIwi5jdPJlLGzba",
+            "pass_hash": "$2b$12$pGO0MWWM9I5GvzLN8PrKSeJtjMN8E8i30t79ghvqUqpWce1jxAqKu",
+            "token": "504dc0bf28a30e67a6929126b1e91cc1"}
 
 
-def tech_insert_user(email=tech_testuser_data()['email'],
-                     password=tech_testuser_data()['pass_hash']):
-    user = User(email=email,
-                password=password)
-    db.session.add(user)
-    db.session.commit()
-
-
-# @pytest.fixture(scope="function")
-# def sure_user_exists():
-#     def _method(email, password):
-#         _delete_user_by_email(email)
-#         tech_insert_user(email, password)
-#     return _method
-@pytest.fixture(scope="function")
-def sure_user_exists(email=tech_testuser_data()['email'], password=tech_testuser_data()['pass_hash']):
-    _delete_user_by_email(email)
-    tech_insert_user(email, password)
-    yield
-
-
-def _delete_user_by_email(email=tech_testuser_data()['email']):
-    user = tech_get_user_by_email(email)
-    if user is not None:
-        db.session.delete(user)
-        db.session.commit()
-
+@pytest.fixture(scope="package")
+def testuser_data():
+    # return tech_testuser_data()
+    return {"email": "qwe@qwe",
+            "password": "oIwi5jdPJlLGzba",
+            "pass_hash": "$2b$12$VVaaR32gGCpWeCrFIVYuMuoVs/ypwfXRpZrrvXhJj3TQvDsbuSziy",
+            "token": "504dc0bf28a30e67a6929126b1e91cc1"}
 
 @pytest.fixture(scope="function")
-def delete_user_by_email():
-    def _method(email):
-        _delete_user_by_email(email)
-    return _method
-
-
-@pytest.fixture(scope="function")
-def sure_user_not_exists(email=tech_testuser_data()['email']):
-    _delete_user_by_email(email)
-    yield
-    _delete_user_by_email(email)
-
-
-@pytest.fixture(scope="function")
-def get_user_by_email():
-    def _method(email):
-        return tech_get_user_by_email(email)
-    return _method
-
-
-@pytest.fixture(params=[
-        ({"email": "qwewasd@qwe1111", "password": "1"}, 400, "Wrong email or password"),
-        ({"email": tech_testuser_data()['email'], "password": "111"}, 400, "Wrong email or password"),
-        ({}, 400, "field required")
-    ])
-def login_test_data(request):
-    return request.param
+def user_is_logged_in():
+    pass
