@@ -12,10 +12,9 @@ class TestTasksCRUD:
         resp = requests.get(API_URL)
         assert resp.status_code == 200
 
-    def test_creation_tasks_validation(self, user_is_logged_in, API_URL):
-        cookies = user_is_logged_in()
-        # print("\nCOOKIES", cookies, user_is_logged_in, API_URL)
-        resp = requests.post(f"{API_URL}/api/v1/tasks", json.dumps({"name": "", "parent_task_id": 1}), cookies=cookies)
+    def test_creation_tasks_validation(self, logged_in_cookies, API_URL):
+        resp = requests.post(f"{API_URL}/api/v1/tasks", json.dumps({"name": "", "parent_task_id": 1}),
+                             cookies=logged_in_cookies)
         print(resp.text)
         assert resp.json()["msg"][0]["msg"] == 'Task name should not be empty'
 

@@ -1,22 +1,7 @@
 import pytest
-import requests
 
 from app import db
 from app.auth.models import User
-
-
-@pytest.fixture(scope="function")
-def user_is_logged_in(API_URL, insert_user, delete_user_by_email, testuser_data):
-# def user_is_logged_in(API_URL, delete_user_by_email, testuser_data):
-    def _method():
-        delete_user_by_email(testuser_data['email'])
-        insert_user(testuser_data['email'], testuser_data['pass_hash'])
-        resp = requests.post(f"{API_URL}/api/v1/accounts/session", json={"email": testuser_data['email'],
-                                                                         "password": testuser_data['password']})
-        cookies = resp.cookies.get_dict()
-        assert cookies != {}
-        return cookies
-    return _method
 
 
 @pytest.fixture()
