@@ -51,3 +51,6 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
 start = "dask.run:run"
+
+[pytest]
+testpaths = ["test"]

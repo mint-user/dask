@@ -11,6 +11,15 @@ def tech_testuser_data():
 
 
 @pytest.fixture(params=[
+    (False, {"email": tech_testuser_data()['email'], "password": tech_testuser_data()['password']}, 401, False),
+    (True, {"email": "not_already@existed_email", "password": tech_testuser_data()['password']}, 200, True),
+    (True, {"email": tech_testuser_data()['email'], "password": tech_testuser_data()['password']}, 400, False)
+])
+def update_user_validations_data(request):
+    return request.param
+
+
+@pytest.fixture(params=[
         ({"email": tech_testuser_data()['email']}, 400, "field required"),
         ({"email": "email", "password": "pqwe123QWDsdf"}, 400, "Email must contain '@'"),
         ({"email": tech_testuser_data()['email'], "password": "pqe1F"}, 400, "Password should contain 8..20 characters"),
@@ -44,13 +53,6 @@ def tech_insert_user(email=tech_testuser_data()['email'],
                 password=password)
     db.session.add(user)
     db.session.commit()
-
-
-@pytest.fixture(scope="function")
-def is_user_logged_in_by_email():
-    def _method():
-        tech_get_user_by_email(email)
-    return _method
 
 
 # @pytest.fixture(scope="function")

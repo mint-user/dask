@@ -9,20 +9,12 @@ class TestUserCreation:
         print(resp.text)
         assert resp.status_code == 200
 
-    testuser_data = {"email": "qwe@qwe",
-                     "password": "oIwi5jdPJlLGzba",
-                     "pass_hash": "$2b$12$VVaaR32gGCpWeCrFIVYuMuoVs/ypwfXRpZrrvXhJj3TQvDsbuSziy",
-                     "token": "504dc0bf28a30e67a6929126b1e91cc1"}
-
-    @pytest.mark.parametrize('logged_in, json, stat_code, passed', [
-        (False, {"email": testuser_data['email'], "password": testuser_data['password']}, 401, False),
-        (True, {"email": "not_already@existed_email", "password": testuser_data['password']}, 200, True),
-        (True, {"email": testuser_data['email'], "password": testuser_data['password']}, 400, False)
-    ])
+    @pytest.mark.parametrize("test_data", [pytest.lazy_fixture("update_user_validations_data")])
     def test_update_user_validations(self, API_URL, sure_user_exists, get_user_by_email, testuser_data,
-                                     delete_user_by_email, logged_in, json, stat_code, passed):
+                                     delete_user_by_email, test_data):
         delete_user_by_email("not_already@existed_email")
         cookies = {}
+        logged_in, json, stat_code, passed = test_data
         if logged_in:
             resp = requests.post(API_URL + "/api/v1/accounts/session", json={"email": testuser_data['email'],
                                                                              "password": testuser_data['password']})
