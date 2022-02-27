@@ -13,12 +13,15 @@ def my_params():
     ]
 
 
+@pytest.fixture(scope="class")
+def delete_user_by_email_not_already_existed_email(delete_user_by_email):
+    delete_user_by_email("not_already@existed_email")
+
 @pytest.fixture(params=[
-    (False, {"email": _testuser_data()['email'], "password": _testuser_data()['password']}, 401, False),
-    (True, {"email": "not_already@existed_email", "password": _testuser_data()['password']}, 200, True),
-    (True, {"email": "not_already@existed_email", "password": "abraQWE123u80n)87Hdfgfdgdfgdfgdfgdfg"}, 400, True),
-    (True, {"email": "not_already@existed_email", "password": "abraQWE123u80n)87H"}, 200, True),
-    (True, {"email": "existed@email", "password": _testuser_data()['password']}, 400, False)
+    ({"email": "not_already@existed_email", "password": _testuser_data()['password']}, 200, True),
+    ({"email": "not_already@existed_email", "password": "abraQWE123u80n)87Hdfgfdgdfgdfgdfgdfg"}, 400, True),
+    ({"email": "not_already@existed_email", "password": "abraQWE123u80n)87H"}, 200, True),
+    # ({"email": "existed@email", "password": _testuser_data()['password']}, 400, False)
 ])
 def update_user_validations_data(request):
     return request.param

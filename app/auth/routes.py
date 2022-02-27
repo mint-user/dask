@@ -75,6 +75,7 @@ def update_user():
 
     user = User.query.filter(User.id == user_id).first()
     if user is None:
+        print(f"USER WITH ID={user_id} NOT FOUND")
         return dict(code=-1, msg=[{"loc": ["email"], "msg": "User is deleted", "type": "value_error"}]), 400
 
     password = creds.password

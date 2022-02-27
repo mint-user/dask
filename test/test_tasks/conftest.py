@@ -1,4 +1,7 @@
 import pytest
+import requests
+
+from app import db
 from app.tasks.models import Task
 
 
@@ -12,10 +15,18 @@ from app.tasks.models import Task
 def task_creation_validation_data(request):
     return request.param
 
-@pytest.fixture(scope="module")
-def delete_all_tasks():
-    # user = get_user_by_email(email)
-    Task.query.delete()
-    # if user is not None:
-    #     db.session.delete(user)
-    #     db.session.commit()
+
+# @pytest.fixture(scope="class")
+# def user_with_no_tasks_loggen_in(sure_user_exists, API_URL, testuser_data, request):
+#     user = sure_user_exists
+#     user_tasks = Task.query.filter(Task.user_id == user.id).all()
+#     for user_task in user_tasks:
+#         db.session.delete(user_task)
+#     db.session.commit()
+#     resp = requests.post(f"{API_URL}/api/v1/accounts/session", json={"email": testuser_data['email'],
+#                                                                      "password": testuser_data['password']})
+#     cookies = resp.cookies.get_dict()
+#     assert "access_token_cookie" in cookies.keys()
+#     # return cookies
+#     request.cls.cookies = cookies
+#     yield
