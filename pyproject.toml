@@ -44,6 +44,8 @@ pytest = "6.2.5"
 allure-pytest = "2.9.45"
 allure-python-commons = "2.9.45"
 pytest-lazy-fixture = "^0.6.3"
+Faker = "^13.2.0"
+pytest-selenium = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

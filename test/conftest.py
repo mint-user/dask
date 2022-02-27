@@ -1,5 +1,8 @@
 import pytest
 import requests
+from selenium import webdriver
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+
 from app import db
 from app.auth.models import User
 from app.tasks.models import Task
@@ -90,3 +93,13 @@ def insert_user():
         db.session.commit()
         return user
     return _method
+
+
+@pytest.fixture()
+def selenium():
+    path = '/home/xander/Documents/dask/test/geckodriver'
+    binary = FirefoxBinary(path)
+    # driver = webdriver.Firefox(firefox_binary=binary)
+    driver = webdriver.Firefox(executable_path=path)
+    yield driver
+    driver.quit()

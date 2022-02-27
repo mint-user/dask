@@ -1,0 +1,25 @@
+1645974856803	geckodriver	INFO	Listening on 127.0.0.1:56539
+1645974856806	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "45085" "-no-remote" "-profile" "/tmp/rust_mozprofileRhT7uu"
+1645974857421	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileRhT7uu/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:45085/devtools/browser/e38c5496-1e78-4336-a1ee-810288126a54
+1645974858632	Marionette	INFO	Listening on port 34691
+1645974858721	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1645974859053	Marionette	INFO	Stopped listening on port 34691
+console.error: services.settings: 
+  main/query-stripping Signature failed  TypeError: NetworkError: Network request failed
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1645980142903	geckodriver	INFO	Listening on 127.0.0.1:59035
+1645980142906	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "--remote-debugging-port" "41475" "-no-remote" "-profile" "/tmp/rust_mozprofileB3eNYJ"
+1645980143335	Marionette	INFO	Marionette enabled
+console.warn: SearchSettings: "get: No settings file exists, new profile?" (new NotFoundError("Could not open the file at /tmp/rust_mozprofileB3eNYJ/search.json.mozlz4", (void 0)))
+DevTools listening on ws://localhost:41475/devtools/browser/df7b338a-04b8-4524-b984-fd38cbb2a436
+1645980144405	Marionette	INFO	Listening on port 33163
+1645980144441	RemoteAgent	WARN	TLS certificate errors will be ignored for this session
+1645980144463	Marionette	INFO	Stopped listening on port 33163
+console.warn: services.settings: main/query-stripping sync interrupted by shutdown
+console.warn: TopSitesFeed: Failed to fetch data from Contile server: NetworkError when attempting to fetch resource.
+console.error: Region.jsm: "Error fetching region" (new TypeError("NetworkError when attempting to fetch resource.", ""))
+console.error: Region.jsm: "Failed to fetch region" (new Error("NO_RESULT", "resource://gre/modules/Region.jsm", 419))

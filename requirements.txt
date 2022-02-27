@@ -29,3 +29,8 @@ SQLAlchemy==1.4.31
 toml==0.10.2
 urllib3==1.26.8
 Werkzeug==2.0.2
+
+pydantic~=1.9.0
+dynaconf~=3.1.7
+Faker~=13.2.0
+selenium~=4.1.2
