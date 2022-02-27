@@ -96,10 +96,13 @@ def insert_user():
 
 
 @pytest.fixture()
-def selenium():
+def selenium(request):
     path = '/home/xander/Documents/dask/test/geckodriver'
     binary = FirefoxBinary(path)
     # driver = webdriver.Firefox(firefox_binary=binary)
     driver = webdriver.Firefox(executable_path=path)
+    driver.implicitly_wait(10)
+    driver.maximize_window()
+    request.cls.driver = driver
     yield driver
     driver.quit()
