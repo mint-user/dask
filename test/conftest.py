@@ -2,6 +2,7 @@ import pytest
 import requests
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+from selenium.webdriver.firefox.options import Options
 
 from app import db
 from app.auth.models import User
@@ -95,14 +96,14 @@ def insert_user():
     return _method
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def selenium(request):
     path = '/home/xander/Documents/dask/test/geckodriver'
-    binary = FirefoxBinary(path)
-    # driver = webdriver.Firefox(firefox_binary=binary)
-    driver = webdriver.Firefox(executable_path=path)
+    options = Options()
+    # options.headless = True
+    driver = webdriver.Firefox(options=options, executable_path=path)
     driver.implicitly_wait(10)
     driver.maximize_window()
-    request.cls.driver = driver
+    # request.cls.driver = driver
     yield driver
     driver.quit()

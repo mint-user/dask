@@ -7,3 +7,4 @@ example.sqlite
 /example.sqlite
 test/allure_results
 /settings.toml
+*driver.log

@@ -1,5 +1,9 @@
+from time import sleep
+
 import pytest
 import requests
+
+from test.test_auth.auth_page import AuthPage
 
 
 @pytest.mark.usefixtures("user_with_no_tasks_loggen_in", "delete_user_by_email_not_already_existed_email")
@@ -108,7 +112,31 @@ class TestUserCreation:
         assert resp.cookies.items() == []
 
 
+@pytest.mark.usefixtures("open_auth_page")
+class TestWeb:
 
+    # def test_open_auth_page(self, open_auth_page):
+    #     # open_auth_page
+    #     # just for test Page Object with fixtures
+    #     pass
+
+    @pytest.mark.parametrize("email, password, err_message", [
+        ("", "ert", "Email should not be empty"),
+        ("ert", "", "Password should not be empty"),
+        ("ert", "ert", "Wrong email or password")
+    ])
+    def test_login_validations(self, selenium, email, password, err_message):
+        # ap = AuthPage(self.driver)
+        ap = AuthPage(selenium)
+        # ap = AuthPage(driver)
+        # ap.open()
+        ap.heading_text_is("Login")
+        ap.error_message_is("")
+
+        ap.input_email(email)
+        ap.input_password(password)
+        ap.submit_form()
+        ap.error_message_is(err_message)
 
 
 

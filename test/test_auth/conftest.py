@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytest
 from test.conftest import _testuser_data
 
@@ -64,3 +66,12 @@ def sure_user_not_exists(delete_user_by_email, testuser_data):
 ])
 def login_test_data(request):
     return request.param
+
+
+@pytest.fixture(scope="class")
+def open_auth_page(selenium):
+    # def _method():
+    #     selenium.get('http://localhost:8080')
+    # return _method
+    selenium.get('http://localhost:8080')
+    sleep(1);

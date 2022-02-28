@@ -17,3 +17,11 @@ task_name = fake.sentence()
                         ])
 def task_creation_validation_data(request):
     return request.param
+
+
+# @pytest.fixture()
+# def open_auth_page(selenium):
+#     # def _method():
+#     #     selenium.get('http://localhost:8080')
+#     # return _method
+#     selenium.get('http://localhost:8080')
